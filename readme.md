@@ -1,4 +1,5 @@
 # Webpack THREE.js Template by brunosimon
+# modified by zersya
 
 ## Setup
 Download [Node.js](https://nodejs.org/en/download/).
