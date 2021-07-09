@@ -106,17 +106,18 @@ renderer.outputEncoding = THREE.sRGBEncoding;
 const composer = new EffectComposer(renderer);
 
 const ssaoPass = new SSAOPass(scene, camera, sizes.width, sizes.height);
-ssaoPass.kernelRadius = 8;
-ssaoPass.minDistance = 0.005;
-ssaoPass.maxDistance = 0.25;
-ssaoPass.output = SSAOPass.OUTPUT.Beauty
+ssaoPass.kernelRadius = 16;
+ssaoPass.minDistance = 0.0025;
+ssaoPass.maxDistance = 0.15;
+ssaoPass.output = SSAOPass.OUTPUT.Default
 composer.addPass(ssaoPass);
 
 
 const controls = new OrbitControls(camera, renderer.domElement);
 // controls.addEventListener('change', render); // use if there is no animation loop
-controls.minDistance = 5;
+controls.minDistance = 10;
 controls.maxDistance = 20;
+
 controls.enableKeys = true
 controls.keys = {
     LEFT: 'KeyA', //left arrow
