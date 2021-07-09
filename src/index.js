@@ -33,17 +33,17 @@ window.addEventListener('resize', () => {
 // Scene
 const scene = new THREE.Scene()
 scene.background = new THREE.Color(0xA0A0A0);
-scene.fog = new THREE.Fog(0xA0A0A0, 10, 25);
+scene.fog = new THREE.Fog(0xA0A0A0, 2, 120);
 
 // Camera
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 1000)
 scene.add(camera)
 
 
-const mesh = new THREE.Mesh(new THREE.PlaneGeometry(150, 150), new THREE.MeshPhongMaterial({ color: 0x999999, depthWrite: false }));
-mesh.rotation.x = - Math.PI / 2;
-mesh.receiveShadow = true;
-scene.add(mesh);
+// const mesh = new THREE.Mesh(new THREE.PlaneGeometry(150, 150), new THREE.MeshPhongMaterial({ color: 0x999999, depthWrite: false }));
+// mesh.rotation.x = - Math.PI / 2;
+// mesh.receiveShadow = true;
+// scene.add(mesh);
 
 var ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
 scene.add(ambientLight);
@@ -68,37 +68,19 @@ const loader = new GLTFLoader();
 
 loader.setPath('assets/models/');
 
-loader
-    .load('ground.gltf', function (object) {
+let earth;
 
-        let model = object.scene;
-
-        model.scale.x = 2;
-        model.scale.z = 2;
-
-        model.traverse(function (object) {
-
-            if (object.isMesh) {
-                object.castShadow = true;
-                object.receiveShadow = true;
-            }
-
-        });
-
-        centerModel(model)
-    }, undefined, function (error) {
-
-        console.error(error);
-
-    });
+var earthmaterial = new THREE.MeshPhongMaterial( {    
+	wireframe: false, 
+	} );
 
 loader
-    .load('candi_cangkuang.gltf', function (object) {
+    .load('Jabar.gltf', function (object) {
 
         let model = object.scene;
+        earth = model;
 
         model.traverse(function (object) {
-
             if (object.isMesh) {
                 object.castShadow = true;
             }
@@ -119,14 +101,14 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setPixelRatio(window.devicePixelRatio)
 renderer.setSize(sizes.width, sizes.height)
 renderer.shadowMap.enabled = true;
-
+renderer.outputEncoding = THREE.sRGBEncoding;
 
 const composer = new EffectComposer(renderer);
 
 const ssaoPass = new SSAOPass(scene, camera, sizes.width, sizes.height);
 ssaoPass.kernelRadius = 8;
-ssaoPass.minDistance = 0.01;
-ssaoPass.maxDistance = 0.3;
+ssaoPass.minDistance = 0.005;
+ssaoPass.maxDistance = 0.25;
 ssaoPass.output = SSAOPass.OUTPUT.Beauty
 composer.addPass(ssaoPass);
 
@@ -137,10 +119,10 @@ controls.minDistance = 5;
 controls.maxDistance = 20;
 controls.enableKeys = true
 controls.keys = {
-	LEFT: 'KeyA', //left arrow
-	UP: 'KeyW', // up arrow
-	RIGHT: 'KeyD', // right arrow
-	BOTTOM: 'KeyS' // down arrow
+    LEFT: 'KeyA', //left arrow
+    UP: 'KeyW', // up arrow
+    RIGHT: 'KeyD', // right arrow
+    BOTTOM: 'KeyS' // down arrow
 }
 controls.target.set(0, 0, - 0.2);
 controls.update();
@@ -157,10 +139,10 @@ function centerModel(model) {
 
     camera.updateProjectionMatrix();
 
-    camera.position.copy(center);
+    // camera.position.copy(center);
     // camera.position.x += size / 2.0;
-    camera.position.y += size / 5.0;
-    camera.position.z += size / 1.2;
+    // camera.position.y += size / 5;
+    camera.position.z += size / 1;
     camera.lookAt(center);
 
     controls.maxDistance = size * 10;
@@ -176,6 +158,12 @@ function render() {
 
 const loop = () => {
     render()
+    if (earth != null) earth.rotation.z += 0.005;
+
+    if(camera.position.z >= 73){
+        camera.position.z -= 0.5
+    }
+
     window.requestAnimationFrame(loop)
 }
 
